@@ -1,7 +1,26 @@
-const express = require('express')
-const app = express()
+const express = require('express');
+const app = express();
+const getPokemonData = require('./modules/getPokemonData');
+const cache = require('./modules/cache.js')
+const cors = require('cors')
+require('dotenv').config();
 
-// respond with "hello world" when a GET request is made to the homepage
-app.get('/', (req, res) => {
-  res.send('hello world')
-})
+
+let PORT = process.env.PORT;
+let objectKey = process.env.PKMN_OBJECTKEY
+
+app.use(
+  cors({
+    origin: 'http://localhost:3000', 
+  })
+)
+
+
+app.get('/', getPokemonData); //cache is generated will the data processed into a class constructor
+
+app.get('/151', (req, res) => {res.send(cache[objectKey])
+    console.log('cache sent!')}); //cache is sent upon request
+
+app.listen(PORT, () => (
+  console.log(`listening on port ${PORT}`)
+));
